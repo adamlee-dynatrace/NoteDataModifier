@@ -35,8 +35,25 @@ function createNoteAndDeleteAfter15Seconds(note) {
   .catch(error => console.error('Error creating:', error));
 }
 
-// Create and delete 3 random notes
-for (let i = 0; i < 3; i++) {
-  const note = createRandomNote();
-  createNoteAndDeleteAfter15Seconds(note);
+let stop = false; 
+
+process.stdin.setRawMode(true); 
+process.stdin.resume(); 
+process.stdin.on('data', () => {
+  stop = true; 
+  process.stdin.setRawMode(false); 
+  process.stdin.pause(); 
+  console.log('Stopping the creation and deletion of notes');
+}); 
+
+
+
+async function createAndDeleteNotes(){
+  while(!stop){
+    const note = createRandomNote(); 
+    createNoteAndDeleteAfter15Seconds(note); 
+    await new Promise(resolve => setTimeout(resolve, 1000)); // wait 1 second before creating the next note
+  }
 }
+
+createAndDeleteNotes();
